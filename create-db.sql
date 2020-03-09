@@ -1,34 +1,34 @@
 USE dibs;
 
-CREATE TABLE images (
+CREATE TABLE IF NOT EXISTS images (
     id VARCHAR(128),
     url TEXT,
     last_updated DATETIME,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE user (
+CREATE TABLE IF NOT EXISTS user (
     uuid VARCHAR(128),
     first VARCHAR(50) NOT NULL,
     last VARCHAR(50),
     salt VARCHAR(8) NOT NULL,
     passhash BINARY(60) NOT NULL,
     profile_image_id VARCHAR(128),
-    PRIMARY KEY (uuid)
+    PRIMARY KEY (uuid),
     FOREIGN KEY (profile_image_id)
         REFERENCES images(id)
 );
 
-CREATE TABLE group (
+CREATE TABLE IF NOT EXISTS groups (
     uuid VARCHAR(128),
     name VARCHAR(128),
     profile_image_id VARCHAR(128),
-    PRIMARY KEY (uuid)
+    PRIMARY KEY (uuid),
     FOREIGN KEY (profile_image_id)
         REFERENCES images(id)
 );
 
-CREATE TABLE in_group (
+CREATE TABLE IF NOT EXISTS in_group (
     user_uuid VARCHAR(128),
     group_uuid VARCHAR(128),
     admin BOOLEAN,
@@ -36,12 +36,12 @@ CREATE TABLE in_group (
     FOREIGN KEY (user_uuid)
         REFERENCES user(uuid)
         ON DELETE CASCADE,
-    FOREIGN KEY (group_uuid),
-        REFERENCES group(uuid)
-        ON DELETE CASCADE 
+    FOREIGN KEY (group_uuid)
+        REFERENCES groups(uuid)
+        ON DELETE CASCADE
 );
 
-CREATE TABLE tasks (
+CREATE TABLE IF NOT EXISTS tasks (
     uid VARCHAR(128),
     group_uuid VARCHAR(128),
     assigned_user VARCHAR(128),
@@ -54,11 +54,11 @@ CREATE TABLE tasks (
     FOREIGN KEY (assigned_user)
         REFERENCES user(uuid),
     FOREIGN KEY (group_uuid)
-        REFERENCES group(uuid)
+        REFERENCES groups(uuid)
         ON DELETE CASCADE
 );
 
-CREATE TABLE recurring_tasks (
+CREATE TABLE IF NOT EXISTS recurring_tasks (
     uid VARCHAR(128),
     group_uuid VARCHAR(128),
     frequency INT,
@@ -67,6 +67,6 @@ CREATE TABLE recurring_tasks (
     description TEXT,
     PRIMARY KEY (uid),
     FOREIGN KEY (group_uuid)
-        REFERENCES group(uuid)
+        REFERENCES groups(uuid)
         ON DELETE CASCADE
 );
