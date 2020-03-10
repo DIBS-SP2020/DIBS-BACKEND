@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS user (
     first VARCHAR(50) NOT NULL,
     last VARCHAR(50),
     email VARCHAR(128),
-    salt VARCHAR(8) NOT NULL,
-    passhash BINARY(60) NOT NULL,
+    salt VARCHAR(128) NOT NULL,
+    passhash VARCHAR(128) NOT NULL,
     profile_image_id VARCHAR(128),
     PRIMARY KEY (uuid),
     FOREIGN KEY (profile_image_id)
