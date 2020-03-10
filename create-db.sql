@@ -1,3 +1,5 @@
+CREATE DATABASE IF NOT EXISTS dibs;
+
 USE dibs;
 
 CREATE TABLE IF NOT EXISTS images (
@@ -11,6 +13,7 @@ CREATE TABLE IF NOT EXISTS user (
     uuid VARCHAR(128),
     first VARCHAR(50) NOT NULL,
     last VARCHAR(50),
+    email VARCHAR(128),
     salt VARCHAR(8) NOT NULL,
     passhash BINARY(60) NOT NULL,
     profile_image_id VARCHAR(128),

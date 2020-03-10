@@ -1,25 +1,12 @@
-const express = require('express')
-const app = express()
-const port = 3000
+const express = require('express');
+const app = express();
+const port = 3000;
 
-app.use(express.json())
+app.use(express.json());
 
-app.get('/', (req, res) => res.send('Hello World!'));
+const auth = require('./routes/auth');
 
-app.post('/login', (req, res) => {
-    cred = req.body;
-
-    if(cred.username === 'admin' && cred.password === 'admin') {
-        res.json({
-            loggedIn: true,
-            apiKey: "<placeholder>"
-        });
-    } else {
-        res.json({
-            loggedIn: false
-        });
-    }
-    
-});
+// Which functions each route should use
+app.use('/auth', auth);
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

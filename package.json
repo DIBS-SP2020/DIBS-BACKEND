@@ -21,6 +21,7 @@
   "homepage": "https://github.com/DIBS-UHM-SP2020/DIBS-UHM-SP2020-BACKEND#readme",
   "dependencies": {
     "bcrypt": "^4.0.1",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
   }
 }
