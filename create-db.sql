@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS groups (
 CREATE TABLE IF NOT EXISTS in_group (
     user_uuid VARCHAR(128),
     group_uuid VARCHAR(128),
+    verified BOOLEAN,
     admin BOOLEAN,
     PRIMARY KEY (user_uuid),
     FOREIGN KEY (user_uuid)
@@ -73,3 +74,12 @@ CREATE TABLE IF NOT EXISTS recurring_tasks (
         REFERENCES groups(uuid)
         ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS user_session (
+    apiKey VARCHAR(64),
+    user_uuid VARCHAR(128),
+    PRIMARY KEY (apiKey),
+    FOREIGN KEY (user_uuid)
+        REFERENCES user(uuid)
+        ON DELETE CASCADE
+)

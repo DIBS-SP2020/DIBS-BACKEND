@@ -43,6 +43,30 @@ router.post('/login', querySaltHandler, bcryptHandler, (req, res) => {
     });
 });
 
+// Route used to logout from session
+router.post('/logout', (req, res) => {
+    let apiKey = req.body.apiKey;
+    let deleteQuery = `DELETE FROM dibs.user_session WHERE apiKey = "${conn.escape(apiKey)}"`
+    conn.query(deleteQuery, (err, results, fields) => {
+        // Check for errors connecting to database and return 503 error if fail.
+        if(err) {
+            console.log("SQL Connection Error: Cannot connect to database for logout");
+            res.status(503).json({
+                error: "Database unavailable",
+            });
+            return;
+        }
+        res.end();
+    });
+});
+
+//TODO: Connect to database to verify if it is correct.
+router.post('/verify', (req, res) => {
+    res.json({
+        verified: true
+    });
+})
+
 // Handles and retrieves the salt for username.
 function querySaltHandler(req, res, next) {
     let cred = req.body;
@@ -77,19 +101,4 @@ function bcryptHandler(req, res, next) {
     });
 }
 
-router.post('/register', (req, res) => {
-    console.log(bcrypt.genSaltSync(10))
-    cred = req.body;
-    res.json({
-        verificationKey: "<placeholder>"
-    });
-});
-
-//TODO: Connect to database to verify if it is correct.
-router.post('/verify', (req, res) => {
-    res.json({
-        verified: true
-    });
-})
-
-module.exports = router
+module.exports = router;
