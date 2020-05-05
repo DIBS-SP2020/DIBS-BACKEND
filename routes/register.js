@@ -14,7 +14,7 @@ let conn = mysql.createConnection({
 function checkUsername(req, res, next) {
     let username = req.body.username
     let usernameQuery = `SELECT email FROM dibs.user\
-                         WHERE LOWER(email) = LOWER("${conn.escape(username)}")`;
+                         WHERE LOWER(email) = LOWER("'${conn.escape(username)}'")`;
     conn.query(usernameQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
         if(err) {
@@ -54,7 +54,7 @@ function bcryptHandler(req, res, next) {
 router.post('/', checkUsername, bcryptSaltGen, bcryptHandler, (req, res) => {
     let date = new Date();
     let username = conn.escape(req.body.username);
-    let uuid = conn.escape(crypto.createHash('sha256', username + date.getDate()));
+    let uuid = conn.escape(crypto.createHash('sha256', username + date.getDate()).digest('hex'));
     let first = conn.escape(req.body.first);
     let last = conn.escape(req.body.last);
     let hash = conn.escape(req.hash);
@@ -65,7 +65,7 @@ router.post('/', checkUsername, bcryptSaltGen, bcryptHandler, (req, res) => {
     conn.query(insertQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
         if(err) {
-            console.log("SQL Connection Error: Cannot execute username query");
+            console.log("SQL Connection Error: Cannot insert new account into database");
             res.status(503).json({
                 error: "Database unavailable",
             });

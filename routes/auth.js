@@ -14,14 +14,14 @@ let conn = mysql.createConnection({
 // LOGIN ROUTE START
 router.post('/login', querySaltHandler, bcryptHandler, (req, res) => {
     let cred = req.body;
-    let loginQuery = `SELECT id FROM dibs.user \
-                      WHERE email = "${conn.escape(cred.username)}" \
-                      AND hash = ${req.hash}`;
+    let loginQuery = `SELECT uuid FROM dibs.user \
+                      WHERE email = "'${conn.escape(cred.username)}'" \
+                      AND passhash = "'${req.hash}'"`;
 
     conn.query(loginQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
         if(err) {
-            console.log("SQL Connection Error: Cannot execute salt retrieval query");
+            console.log("SQL Connection Error: Cannot execute login query");
             res.status(503).json({
                 error: "Database unavailable",
                 loggedIn: false
@@ -70,7 +70,7 @@ router.post('/verify', (req, res) => {
 // Handles and retrieves the salt for username.
 function querySaltHandler(req, res, next) {
     let cred = req.body;
-    let saltQuery = `SELECT salt FROM dibs.user WHERE email = "${conn.escape(cred.username)}"`
+    let saltQuery = `SELECT salt FROM dibs.user WHERE email = "'${conn.escape(cred.username)}'"`
     conn.query(saltQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
         if(err) {
