@@ -11,27 +11,23 @@ let conn = mysql.createConnection({
     password: "password"
 });
 
-router.post('/create', session, checkAdmin, (req, res) => {
-    //Need to get list of users to randomly select one to be assigned.
+// Gets list of prizes
+router.get('/', session, (req, res) => {
+
 });
 
+// Creates prizes
+router.post('/add', session, checkAdmin, (req, res) => {
+
+});
+
+// Deletes prizes
 router.post('/delete', session, checkAdmin, (req, res) => {
 
 });
 
-router.post('/update', session, checkAdmin, (req, res) => {
-
-});
-
-router.post('/dib', session, (req, res) => {
-
-});
-
-router.get('/list', session, (req, res) => {
-
-});
-
-router.post('/completed', session, (req, res) => {
+// Buys using points
+router.post('/buy', session, (req, res) => {
 
 });
 

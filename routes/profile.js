@@ -53,7 +53,8 @@ function getUser(req, res, next) {
 
 function getGroups(req, res, next) {
     let id = req.user.id;
-    let profileQuery = `SELECT groups.name AS name, groups.uuid AS group_id, images.id AS image \
+    let profileQuery = `SELECT groups.name AS name, groups.uuid AS group_id, images.id AS image, \
+                            in_group.admin AS admin, in_group.points AS points
                         FROM dibs.user \
                         JOIN dibs.in_group ON user.uuid = in_group.user_uuid \
                         JOIN dibs.groups ON groups.uuid = in_group.group_uuid \

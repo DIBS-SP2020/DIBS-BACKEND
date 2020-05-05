@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS in_group (
     user_uuid VARCHAR(128),
     group_uuid VARCHAR(128),
     verified BOOLEAN,
+    points INTEGER,
     admin BOOLEAN,
     PRIMARY KEY (user_uuid),
     FOREIGN KEY (user_uuid)
@@ -45,14 +46,26 @@ CREATE TABLE IF NOT EXISTS in_group (
         ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS prizes (
+    id VARCHAR(128),
+    group_uuid VARCHAR(128),
+    name TEXT,
+    points INTEGER,
+    PRIMARY KEY (id),
+    FOREIGN KEY (group_uuid)
+        REFERENCES groups(uuid)
+        ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS tasks (
     uid VARCHAR(128),
     group_uuid VARCHAR(128),
     assigned_user VARCHAR(128),
     dibbed BOOLEAN,
+    sell_value INTEGER,
     complete_date DATETIME,
     icon_id INT,
-    point_value INT,
+    point_value INTEGER,
     description TEXT,
     PRIMARY KEY (uid),
     FOREIGN KEY (assigned_user)
@@ -73,6 +86,25 @@ CREATE TABLE IF NOT EXISTS recurring_tasks (
     FOREIGN KEY (group_uuid)
         REFERENCES groups(uuid)
         ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS barter (
+    group_uuid VARCHAR(128),
+    user1_uuid VARCHAR(128),
+    user2_uuid VARCHAR(128),
+    task_id VARCHAR(128),
+    points INTEGER,
+    PRIMARY KEY (user1_uuid, user2_uuid, task_id),
+    FOREIGN KEY (group_uuid)
+        REFERENCES groups(uuid)
+        ON DELETE CASCADE
+    FOREIGN KEY (task_id)
+        REFERENCES tasks(uid)
+        ON DELETE CASCADE
+    FOREIGN KEY (user1_uuid)
+        REFERENCES user(uuid),
+    FOREIGN KEY (user2_uuid)
+        REFERENCES user(uuid),
 );
 
 CREATE TABLE IF NOT EXISTS user_session (

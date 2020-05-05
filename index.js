@@ -17,4 +17,7 @@ app.use('/register', register)
 app.use('/task', task)
 app.use('/group', group)
 
+// TODO: Add cron job to deleting bartering statuses (like after job completion date),
+// deleting tasks, generating recurring_tasks, and deducting points if task has not been completed.
+
 app.listen(port, () => console.log(`App listening on port ${port}!`));
