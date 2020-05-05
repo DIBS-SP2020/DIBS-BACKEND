@@ -29,7 +29,7 @@ function getUser(req, res, next) {
     let body = req.body;
     let apiKey = body.apiKey;
 
-    let profileQuery = `SELECT images.url AS image, first AS user.first, last AS user.last, id AS user.uuid \
+    let profileQuery = `SELECT images.url AS image, user.first AS first, user.last AS last, user.uuid AS id \
                         FROM dibs.user_session \
                         JOIN dibs.user ON user.uuid = user_session.user_uuid \
                         JOIN dibs.images ON user.profile_image_id = images.id \
@@ -78,8 +78,8 @@ function getGroups(req, res, next) {
 
 function getTasks(req, res, next) {
     let id = req.user.id;
-    let profileQuery = `SELECT tasks.group_uuid AS group_id, dibbed AS tasks.dibbed, complete_date AS tasks.complete_date, \
-                            icon_id AS tasks.icon_id, points AS tasks.point_value
+    let profileQuery = `SELECT tasks.group_uuid AS group_id, tasks.dibbed AS dibbed, tasks.complete_date AS complete_date, \
+                            tasks.icon_id AS icon_id, tasks.point_value AS points
                         FROM dibs.user \
                         JOIN dibs.tasks ON user.uuid = tasks.assigned_user \
                         WHERE user.uuid = ${conn.escape(id)}`;
