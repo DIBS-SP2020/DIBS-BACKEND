@@ -60,7 +60,7 @@ router.post('/', checkUsername, bcryptSaltGen, bcryptHandler, (req, res) => {
     let hash = conn.escape(req.hash);
     let salt = conn.escape(req.salt);
 
-    let insertQuery = `INSERT INTO dibs.user VALUES("${uuid}", "${first}", "${last}", "${username}", "${salt}", "${hash}", "0")`;
+    let insertQuery = `INSERT INTO dibs.user VALUES('${uuid}', '${first}', '${last}', '${username}', '${salt}', '${hash}', '0')`;
 
     conn.query(insertQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
