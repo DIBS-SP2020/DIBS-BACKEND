@@ -37,7 +37,7 @@ function checkUsername(req, res, next) {
 }
 
 function bcryptSaltGen(req, res, next) {
-    bcrypt.genSalt(20, (err, salt) => {
+    bcrypt.genSalt(12, (err, salt) => {
         req.salt = salt;
         next();
     })
@@ -52,8 +52,9 @@ function bcryptHandler(req, res, next) {
 
 // Route used to register for an account
 router.post('/', checkUsername, bcryptSaltGen, bcryptHandler, (req, res) => {
+    let date = new Date();
     let username = conn.escape(req.body.username);
-    let uuid = conn.escape(crypto.createHash('sha256', username + Date.getDate()));
+    let uuid = conn.escape(crypto.createHash('sha256', username + date.getDate()));
     let first = conn.escape(req.body.first);
     let last = conn.escape(req.body.last);
     let hash = conn.escape(req.hash);
