@@ -14,9 +14,9 @@ let conn = mysql.createConnection({
 // Default route for retrieving the profile
 router.get('/', session, getUser, getGroups, getTasks, (req, res) => {
     res.json({
-        tasks: req.tasks,
-        user: req.user,
-        group: req.groups
+        user: req.user[0],
+        groups: req.groups,
+        tasks: req.tasks
     })
 });
 
