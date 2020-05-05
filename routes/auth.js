@@ -16,7 +16,7 @@ router.post('/login', querySaltHandler, bcryptHandler, (req, res) => {
     let cred = req.body;
     let loginQuery = `SELECT uuid FROM dibs.user \
                       WHERE email = ${conn.escape(cred.username)} \
-                      AND passhash = ${req.hash}`;
+                      AND passhash = '${req.hash}'`;
 
     conn.query(loginQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
@@ -35,10 +35,10 @@ router.post('/login', querySaltHandler, bcryptHandler, (req, res) => {
             });
             return;
         }
-
+        let date = new Date();
         res.json({
             loggedIn: true,
-            apiKey: crypto.createHash('sha256', cred.username + Date.getDate())
+            apiKey: crypto.createHash('sha256', cred.username + date.getDate())
         });
     });
 });
