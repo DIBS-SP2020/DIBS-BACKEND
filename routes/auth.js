@@ -35,10 +35,16 @@ router.post('/login', querySaltHandler, bcryptHandler, (req, res) => {
             });
             return;
         }
+
         let date = new Date();
-        res.json({
-            loggedIn: true,
-            apiKey: crypto.createHash('sha256', cred.username + date.getDate())
+        let apiKey = crypto.createHash('sha256', cred.username + date.getDate()).digest('hex');
+        let uuid = conn.escape(results[0].uuid);
+        let sessionInsertQuery = `INSERT INTO dibs.user_session VALUES(${conn.escape(apiKey)}, ${uuid})`;
+        conn.query(sessionInsertQuery, (err, results, fields) => {
+            res.json({
+                loggedIn: true,
+                apiKey: apiKey
+            });
         });
     });
 });
