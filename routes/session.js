@@ -9,7 +9,7 @@ let conn = mysql.createConnection({
 // Function used to check if there is a session for the user.
 function sessionCheck(req, res, next) {
     let apiKey = req.body.apiKey;
-    let sessionQuery = `SELECT apiKey FROM dibs.user_session WHERE apiKey = "'${conn.escape(apiKey)}'"`;
+    let sessionQuery = `SELECT apiKey FROM dibs.user_session WHERE apiKey = ${conn.escape(apiKey)}`;
     conn.query(sessionQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
         if(err) {

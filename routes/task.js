@@ -18,7 +18,7 @@ function findUserID(req, res, next) {
     let profileQuery = `SELECT id AS user.uuid \
                         FROM dibs.user_session \
                         JOIN dibs.user ON user.uuid = user_session.user_uuid \
-                        WHERE user_session.apiKey = "'${conn.escape(apiKey)}'"`;
+                        WHERE user_session.apiKey = ${conn.escape(apiKey)}`;
 
     conn.query(profileQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.

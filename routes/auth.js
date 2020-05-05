@@ -15,8 +15,8 @@ let conn = mysql.createConnection({
 router.post('/login', querySaltHandler, bcryptHandler, (req, res) => {
     let cred = req.body;
     let loginQuery = `SELECT uuid FROM dibs.user \
-                      WHERE email = "'${conn.escape(cred.username)}'" \
-                      AND passhash = "'${req.hash}'"`;
+                      WHERE email = ${conn.escape(cred.username)} \
+                      AND passhash = ${req.hash}`;
 
     conn.query(loginQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
@@ -46,7 +46,7 @@ router.post('/login', querySaltHandler, bcryptHandler, (req, res) => {
 // Route used to logout from session
 router.post('/logout', (req, res) => {
     let apiKey = req.body.apiKey;
-    let deleteQuery = `DELETE FROM dibs.user_session WHERE apiKey = "${conn.escape(apiKey)}"`
+    let deleteQuery = `DELETE FROM dibs.user_session WHERE apiKey = ${conn.escape(apiKey)}`
     conn.query(deleteQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
         if(err) {
@@ -70,7 +70,7 @@ router.post('/verify', (req, res) => {
 // Handles and retrieves the salt for username.
 function querySaltHandler(req, res, next) {
     let cred = req.body;
-    let saltQuery = `SELECT salt FROM dibs.user WHERE email = "'${conn.escape(cred.username)}'"`
+    let saltQuery = `SELECT salt FROM dibs.user WHERE email = ${conn.escape(cred.username)}`
     conn.query(saltQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
         if(err) {
