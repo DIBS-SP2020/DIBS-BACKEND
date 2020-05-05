@@ -38,7 +38,7 @@ function getUser(req, res, next) {
     conn.query(profileQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
         if(err) {
-            console.log("SQL Connection Error: Cannot execute salt retrieval query");
+            console.log("SQL Connection Error: Cannot execute user retrieval query");
             res.status(503).json({
                 error: "Database unavailable",
                 loggedIn: false
@@ -63,7 +63,7 @@ function getGroups(req, res, next) {
     conn.query(profileQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
         if(err) {
-            console.log("SQL Connection Error: Cannot execute salt retrieval query");
+            console.log("SQL Connection Error: Cannot execute group retrieval query");
             res.status(503).json({
                 error: "Database unavailable",
                 loggedIn: false
@@ -87,7 +87,7 @@ function getTasks(req, res, next) {
     conn.query(profileQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
         if(err) {
-            console.log("SQL Connection Error: Cannot execute salt retrieval query");
+            console.log("SQL Connection Error: Cannot execute task retrieval query");
             res.status(503).json({
                 error: "Database unavailable",
                 loggedIn: false
