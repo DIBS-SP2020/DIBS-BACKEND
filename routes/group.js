@@ -66,16 +66,44 @@ router.post('/image', session, (req, res) => {
     res.status(501).end();
 });
 
-router.post('/addUser', session, inGroup, (req, res) => {
+router.post('/addUser', session, (req, res) => {
+    let userID = conn.escape(req.userID);
+    let uuid = conn.escape(req.body.groupID);
 
+    let addUserQuery = `INSERT INTO dibs.in_group VALUES(${userID}, ${uuid}, FALSE, 0, FALSE)`;
+
+    conn.query(addUserQuery, (err, results, fields) => {
+        if(err) {
+            console.log("SQL Connection Error: Unable to query database for group admin");
+            res.status(503).json({
+                error: "Database unavailable",
+            });
+            return;
+        }
+        res.end();
+    });
 });
 
-router.post('/modifyPermission', session, inGroup, (req, res) => {
+router.post('/modifyPermission', session, inGroup, checkAdmin, (req, res) => {
+    let userID = conn.escape(req.body.modifiedUserID);
+    let groupID = conn.escape(req.body.groupID);
 
+    let modifyQuery = `UPDATE dibs.in_group SET verified = TRUE WHERE user_uuid = ${userID} AND group_uuid = ${groupID}`;
+
+    conn.query(modifyQuery, (err, results, fields) => {
+        if(err) {
+            console.log("SQL Connection Error: Unable to query database for group admin");
+            res.status(503).json({
+                error: "Database unavailable",
+            });
+            return;
+        }
+        res.end();
+    });
 });
 
 router.post('/listUsers', session, inGroup, (req, res) => {
-
+    
 });
 
 function checkAdmin(req, res, next) {
@@ -103,7 +131,28 @@ function checkAdmin(req, res, next) {
 
 // Checks if person is already in group
 function inGroup(req, res, next) {
+    let userID = conn.escape(req.userID);
+    let uuid = conn.escape(req.body.groupID);
 
+    let adminQuery = `SELECT user_uuid FROM dibs.in_group WHERE user_uuid = ${userID} AND group_uuid = ${uuid}`;
+
+    conn.query(adminQuery, (err, results, fields) => {
+        if(err) {
+            console.log("SQL Connection Error: Unable to query database for user in group");
+            res.status(503).json({
+                error: "Database unavailable",
+            });
+            return;
+        }
+
+        if(results.length > 1) {
+            res.json({
+                status: "User already exists"
+            });
+        }
+
+        next();
+    });
 }
 
 module.exports = router;
