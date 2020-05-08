@@ -38,7 +38,9 @@ router.post('/create', session, (req, res) => {
                 });
                 return;
             }
-            res.end();
+            res.json({
+                groupID: uuid
+            });
         });
     });
 });
@@ -66,7 +68,14 @@ router.post('/image', session, (req, res) => {
     res.status(501).end();
 });
 
-router.post('/addUser', session, (req, res) => {
+router.post('/addUser', session, inGroup, (req, res) => {
+
+    if(results.length > 0) {
+        res.json({
+            status: "User already exists"
+        });
+    }
+
     let userID = conn.escape(req.userID);
     let uuid = conn.escape(req.body.groupID);
 
@@ -84,7 +93,39 @@ router.post('/addUser', session, (req, res) => {
     });
 });
 
-router.post('/modifyPermission', session, inGroup, checkAdmin, (req, res) => {
+router.post('/modifyPermission', session, checkAdmin, inGroup, (req, res) => {
+
+    if(req.num_users == 0) {
+        res.json({
+            status: "User not in group"
+        });
+    }
+
+    let userID = conn.escape(req.body.modifiedUserID);
+    let groupID = conn.escape(req.body.groupID);
+
+    let modifyQuery = `UPDATE dibs.in_group SET admin = TRUE WHERE user_uuid = ${userID} AND group_uuid = ${groupID}`;
+
+    conn.query(modifyQuery, (err, results, fields) => {
+        if(err) {
+            console.log("SQL Connection Error: Unable to query database for group admin");
+            res.status(503).json({
+                error: "Database unavailable",
+            });
+            return;
+        }
+        res.end();
+    });
+});
+
+router.post('/verify', session, checkAdmin, inGroup, (req, res) => {
+
+    if(req.num_users == 0) {
+        res.json({
+            status: "User not in group"
+        });
+    }
+
     let userID = conn.escape(req.body.modifiedUserID);
     let groupID = conn.escape(req.body.groupID);
 
@@ -102,8 +143,35 @@ router.post('/modifyPermission', session, inGroup, checkAdmin, (req, res) => {
     });
 });
 
-router.post('/listUsers', session, inGroup, (req, res) => {
+router.get('/listUsers', session, inGroup, (req, res) => {
+    if(results.length == 0) {
+        res.json({
+            status: "Not part of group"
+        });
+    }
+
+    let groupID = conn.escape(req.body.groupID)
+
+    let userQuery = `SELECT user.first AS first, user.last AS last, images.url AS image\
+                     FROM dibs.in_group
+                     JOIN dibs.in_group ON user.uuid = in_group.user_uuid \
+                     JOIN dibs.groups ON groups.uuid = in_group.group_uuid \
+                     JOIN dibs.images ON groups.profile_image_id = images.id \
+                     WHERE group.uuid = ${groupID}`;
     
+    conn.query(userQuery, (err, results, fields) => {
+        if(err) {
+            console.log("SQL Connection Error: Unable to query database for group users");
+            res.status(503).json({
+                error: "Database unavailable",
+            });
+            return;
+        }
+
+        res.json({
+            users: results
+        });
+    });
 });
 
 function checkAdmin(req, res, next) {
@@ -144,13 +212,7 @@ function inGroup(req, res, next) {
             });
             return;
         }
-
-        if(results.length > 1) {
-            res.json({
-                status: "User already exists"
-            });
-        }
-
+        req.num_users = results.length;
         next();
     });
 }

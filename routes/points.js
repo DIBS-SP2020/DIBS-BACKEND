@@ -12,7 +12,30 @@ let conn = mysql.createConnection({
 });
 
 router.get('/', session, (req, res) => {
+    let userID = conn.escape(req.userID);
+    let groupID = conn.escape(req.body.groupID);
 
+    let queryPoints = `SELECT points FROM dibs.in_group WHERE user_uuid = ${userID} AND group_uuid = ${groupID}`;
+
+    conn.query(queryPoints, (err, results, fields) => {
+        if(err) {
+            console.log("SQL Connection Error: Unable to query database for points");
+            res.status(503).json({
+                error: "Database unavailable",
+            });
+            return;
+        }
+        if(results.length == 0) {
+            res.json({
+                status: "No user found"
+            });
+            return;
+        }
+
+        res.json({
+            points: results[0].points
+        })
+    });
 });
 
 // People who don't want to do a task can set task sell value if they have no dibbed.
@@ -30,9 +53,8 @@ router.post('/accept', session, (req, res) => {
 
 });
 
-// Gets list of tasks
-router.get('/barter', session, (req, res) => {
-
-});
+function getTask(req, res, next) {
+    
+}
 
 module.exports = router;

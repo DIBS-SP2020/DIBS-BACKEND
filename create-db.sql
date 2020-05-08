@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS in_group (
     verified BOOLEAN,
     points INTEGER,
     admin BOOLEAN,
-    PRIMARY KEY (user_uuid),
+    PRIMARY KEY (user_uuid, group_uuid),
     FOREIGN KEY (user_uuid)
         REFERENCES user(uuid)
         ON DELETE CASCADE,
@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     dibbed BOOLEAN,
     sell_value INTEGER,
     complete_date DATETIME,
+    completed BOOLEAN,
     icon_id INT,
     point_value INTEGER,
     description TEXT,

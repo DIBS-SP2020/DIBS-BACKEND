@@ -59,7 +59,8 @@ function getGroups(req, res, next) {
                         JOIN dibs.in_group ON user.uuid = in_group.user_uuid \
                         JOIN dibs.groups ON groups.uuid = in_group.group_uuid \
                         JOIN dibs.images ON groups.profile_image_id = images.id \
-                        WHERE user.uuid = ${conn.escape(id)}`;
+                        WHERE user.uuid = ${conn.escape(id)}
+                        AND in_group.verified = TRUE`;
 
     conn.query(profileQuery, (err, results, fields) => {
         // Check for errors connecting to database and return 503 error if fail.
@@ -80,7 +81,8 @@ function getGroups(req, res, next) {
 function getTasks(req, res, next) {
     let id = req.user.id;
     let profileQuery = `SELECT tasks.group_uuid AS group_id, tasks.dibbed AS dibbed, tasks.complete_date AS complete_date, \
-                            tasks.icon_id AS icon_id, tasks.point_value AS points
+                            tasks.completed AS completed, tasks.icon_id AS icon_id, tasks.point_value AS points,\
+                            tasks.description AS description, tasks.sell_value AS sell_value
                         FROM dibs.user \
                         JOIN dibs.tasks ON user.uuid = tasks.assigned_user \
                         WHERE user.uuid = ${conn.escape(id)}`;
